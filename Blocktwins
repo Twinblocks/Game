@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avoid the Obstacles</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="600" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let playerX = 50;
+    let playerY = canvas.height / 2;
+    let playerWidth = 20;
+    let playerHeight = 20;
+    let obstacleX = canvas.width;
+    let obstacleWidth = 30;
+    let obstacleHeight = 30;
+    let obstacleSpeed = 3;
+    let isGameOver = false;
+
+    function drawPlayer() {
+      ctx.fillStyle = "blue";
+      ctx.fillRect(playerX, playerY, playerWidth, playerHeight);
+    }
+
+    function drawObstacle() {
+      ctx.fillStyle = "red";
+      ctx.fillRect(obstacleX, canvas.height / 2 - obstacleHeight / 2, obstacleWidth, obstacleHeight);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawPlayer();
+      drawObstacle();
+
+      if (!isGameOver) {
+        obstacleX -= obstacleSpeed;
+        if (obstacleX + obstacleWidth < 0) {
+          obstacleX = canvas.width;
+        }
+        if (checkCollision()) {
+          isGameOver = true;
+          alert("Game Over! Your score: " + Math.floor(obstacleX / 100));
+        }
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    function checkCollision() {
+      return playerX < obstacleX + obstacleWidth &&
+             playerX + playerWidth > obstacleX &&
+             playerY < canvas.height / 2 + obstacleHeight / 2 &&
+             playerY + playerHeight > canvas.height / 2 - obstacleHeight / 2;
+    }
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "ArrowUp" && playerY > 0) {
+        playerY -= 10;
+      } else if (event.key === "ArrowDown" && playerY < canvas.height - playerHeight) {
+        playerY += 10;
+      }
+    });
+
+    draw();
+  </script>
+</body>
+</html>
